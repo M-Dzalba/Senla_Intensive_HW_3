@@ -11,7 +11,7 @@ public class ConfigLoader {
     static {
         try (InputStream input = ConfigLoader.class.getClassLoader().getResourceAsStream("application.properties")) {
             if (input == null) {
-                System.out.println("Sorry, unable to find application.properties");
+                System.out.println("Unable to find application.properties");
             }
             properties.load(input);
         } catch (IOException ex) {

@@ -28,7 +28,7 @@ public class IoCContainer {
         return instance;
     }
 
-    public void registerComponents(Set<Class<?>> componentClasses) throws Exception {
+    public void registerComponents(Set<Class<?>> componentClasses) {
         for (Class<?> clazz : componentClasses) {
             if (clazz.isAnnotationPresent(Component.class)) {
                 Class<?>[] interfaces = clazz.getInterfaces();
@@ -59,6 +59,7 @@ public class IoCContainer {
         }
 
         Constructor<?> constructor = findSuitableConstructor(implementationType.getConstructors());
+        assert constructor != null;
         Object[] constructorArgs = resolveConstructorArguments(constructor);
 
         Object instance = constructor.newInstance(constructorArgs);
