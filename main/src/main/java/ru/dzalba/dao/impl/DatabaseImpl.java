@@ -8,10 +8,7 @@ import ru.dzalba.utils.ParametersHolder;
 
 @Component
 public class DatabaseImpl implements DatabaseInterface {
-//    @Override
-//    public void execute() {
-//        System.out.println("Database operation executed.");
-//    }
+
     private ParametersHolder parametersHolder;
 
     @Autowire

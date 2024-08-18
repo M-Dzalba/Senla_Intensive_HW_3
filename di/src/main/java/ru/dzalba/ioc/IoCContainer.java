@@ -1,10 +1,10 @@
 package ru.dzalba.ioc;
 
+import ru.dzalba.utils.ComponentScanner;
 import ru.dzalba.utils.ConfigLoader;
 import ru.dzalba.annotations.Autowire;
 import ru.dzalba.annotations.Component;
 import ru.dzalba.annotations.Value;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -19,6 +19,17 @@ public class IoCContainer {
     private final Map<Class<?>, Class<?>> typeMap = new HashMap<>();
     private final Map<Class<?>, Object> singletonMap = new HashMap<>();
 
+    static {
+        try {
+            instance = new IoCContainer();
+            Set<Class<?>> components = ComponentScanner.scanForComponents("ru.dzalba");
+            instance.registerComponents(components);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize IoC Container", e);
+        }
+    }
+
     private IoCContainer() {}
 
     public static synchronized IoCContainer getInstance() {
@@ -28,7 +39,7 @@ public class IoCContainer {
         return instance;
     }
 
-    public void registerComponents(Set<Class<?>> componentClasses) throws Exception {
+    public void registerComponents(Set<Class<?>> componentClasses) {
         for (Class<?> clazz : componentClasses) {
             if (clazz.isAnnotationPresent(Component.class)) {
                 Class<?>[] interfaces = clazz.getInterfaces();
@@ -59,6 +70,7 @@ public class IoCContainer {
         }
 
         Constructor<?> constructor = findSuitableConstructor(implementationType.getConstructors());
+        assert constructor != null;
         Object[] constructorArgs = resolveConstructorArguments(constructor);
 
         Object instance = constructor.newInstance(constructorArgs);
