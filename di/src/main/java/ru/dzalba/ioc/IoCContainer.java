@@ -5,7 +5,6 @@ import ru.dzalba.utils.ConfigLoader;
 import ru.dzalba.annotations.Autowire;
 import ru.dzalba.annotations.Component;
 import ru.dzalba.annotations.Value;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
