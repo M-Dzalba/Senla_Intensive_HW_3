@@ -8,10 +8,10 @@ import ru.dzalba.service.ServiceInterface;
 @Component
 public class ServiceImpl implements ServiceInterface {
 
-private DatabaseInterface database;
+    private final DatabaseInterface database;
 
     @Autowire
-    public void setDatabase(DatabaseInterface database) {
+    public ServiceImpl(DatabaseInterface database) {
         this.database = database;
     }
 
