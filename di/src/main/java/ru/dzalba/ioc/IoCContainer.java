@@ -1,5 +1,6 @@
 package ru.dzalba.ioc;
 
+import ru.dzalba.utils.ComponentScanner;
 import ru.dzalba.utils.ConfigLoader;
 import ru.dzalba.annotations.Autowire;
 import ru.dzalba.annotations.Component;
@@ -18,6 +19,17 @@ public class IoCContainer {
 
     private final Map<Class<?>, Class<?>> typeMap = new HashMap<>();
     private final Map<Class<?>, Object> singletonMap = new HashMap<>();
+
+    static {
+        try {
+            instance = new IoCContainer();
+            Set<Class<?>> components = ComponentScanner.scanForComponents("ru.dzalba");
+            instance.registerComponents(components);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize IoC Container", e);
+        }
+    }
 
     private IoCContainer() {}
 
