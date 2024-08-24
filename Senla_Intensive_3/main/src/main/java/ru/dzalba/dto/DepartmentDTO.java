@@ -16,6 +16,13 @@ public class DepartmentDTO {
     @JsonProperty("parentLocationId")
     private Integer parentLocationId;
 
+    public DepartmentDTO(int id, String name, String location, Integer parentLocationId) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.parentLocationId = parentLocationId;
+    }
+
     public int getId() {
         return id;
     }

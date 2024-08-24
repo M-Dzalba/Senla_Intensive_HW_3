@@ -6,6 +6,13 @@ public class Department {
     private String location;
     private Integer parentLocationId;
 
+    public Department(int id, String name, String location, Integer parentLocationId) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.parentLocationId = parentLocationId;
+    }
+
     public int getId() {
         return id;
     }
