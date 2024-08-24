@@ -8,21 +8,6 @@ import ru.dzalba.service.ServiceInterface;
 @Component
 public class ServiceImpl implements ServiceInterface {
 
-//    private DatabaseInterface database;
-//
-//    @Autowire
-//    public void setDatabase(DatabaseInterface database) {
-//        this.database = database;
-//    }
-//
-//    @Override
-//    public String execute() {
-//        if (database != null) {
-//          return   database.execute();
-//        } else {
-//            System.out.println("No database dependency.");
-//        }
-//    }
 private DatabaseInterface database;
 
     @Autowire
@@ -32,7 +17,7 @@ private DatabaseInterface database;
 
     @Override
     public String execute() {
-        return "";
+        return   database.execute();
     }
 
     public void performAction() {
