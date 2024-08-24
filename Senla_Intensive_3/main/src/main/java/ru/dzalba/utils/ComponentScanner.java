@@ -17,6 +17,7 @@ public class ComponentScanner {
         if (directory.exists()) {
             scanDirectory(directory, basePackage, components);
         }
+
         return components;
     }
 
