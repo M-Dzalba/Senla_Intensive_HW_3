@@ -3,6 +3,7 @@ package ru.dzalba.models;
 import java.util.Date;
 
 public class Employee {
+
     private int id;
     private String fullName;
     private Date birthDate;
@@ -10,6 +11,17 @@ public class Employee {
     private String email;
     private int positionId;
     private int departmentId;
+
+    public Employee(int id, String fullName, Date birthDate, String phoneNumber, String email,
+                    int positionId, int departmentId) {
+        this.id = id;
+        this.fullName = fullName;
+        this.birthDate = birthDate;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.positionId = positionId;
+        this.departmentId = departmentId;
+    }
 
     public int getId() {
         return id;

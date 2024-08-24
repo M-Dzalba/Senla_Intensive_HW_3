@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class DepartmentDTO {
+
     @JsonProperty("id")
     private int id;
 

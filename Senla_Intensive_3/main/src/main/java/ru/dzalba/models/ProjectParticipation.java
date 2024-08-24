@@ -4,11 +4,20 @@ import java.util.Date;
 
 
 public class ProjectParticipation {
+
     private int employeeId;
     private int projectId;
     private String role;
     private Date startDate;
     private Date endDate;
+
+    public ProjectParticipation(int employeeId, int projectId, String role, Date startDate, Date endDate) {
+        this.employeeId = employeeId;
+        this.projectId = projectId;
+        this.role = role;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     public int getEmployeeId() {
         return employeeId;
