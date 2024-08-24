@@ -1,5 +1,6 @@
 package ru.dzalba.service;
 
+import org.springframework.stereotype.Service;
 import ru.dzalba.dao.EmployeeDAO;
 import ru.dzalba.dto.EmployeeDTO;
 import ru.dzalba.models.Employee;
@@ -8,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class EmployeeService {
-
     private final EmployeeDAO employeeDAO;
 
     public EmployeeService(EmployeeDAO employeeDAO) {

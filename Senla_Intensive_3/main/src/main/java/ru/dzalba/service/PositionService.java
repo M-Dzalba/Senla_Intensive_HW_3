@@ -1,5 +1,6 @@
 package ru.dzalba.service;
 
+import org.springframework.stereotype.Service;
 import ru.dzalba.dao.PositionDAO;
 import ru.dzalba.dto.PositionDTO;
 import ru.dzalba.models.Position;
@@ -8,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class PositionService {
-
     private final PositionDAO positionDAO;
 
     public PositionService(PositionDAO positionDAO) {

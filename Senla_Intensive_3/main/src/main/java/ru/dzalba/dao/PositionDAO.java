@@ -1,13 +1,14 @@
 package ru.dzalba.dao;
 
+import org.springframework.stereotype.Component;
 import ru.dzalba.models.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class PositionDAO {
-
     private final List<Position> positions = new ArrayList<>();
 
     public void addPosition(Position position) {

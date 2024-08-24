@@ -1,13 +1,14 @@
 package ru.dzalba.dao;
 
+import org.springframework.stereotype.Component;
 import ru.dzalba.models.Project;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class ProjectDAO {
-
     private final List<Project> projects = new ArrayList<>();
 
     public void addProject(Project project) {

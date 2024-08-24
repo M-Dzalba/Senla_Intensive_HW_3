@@ -1,13 +1,14 @@
 package ru.dzalba.dao;
 
+import org.springframework.stereotype.Component;
 import ru.dzalba.models.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class EmployeeDAO {
-
     private final List<Employee> employees = new ArrayList<>();
 
     public void addEmployee(Employee employee) {

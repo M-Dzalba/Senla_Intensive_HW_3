@@ -1,5 +1,6 @@
 package ru.dzalba.service;
 
+import org.springframework.stereotype.Service;
 import ru.dzalba.dao.DepartmentDAO;
 import ru.dzalba.dto.DepartmentDTO;
 import ru.dzalba.models.Department;
@@ -8,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class DepartmentService {
-
     private final DepartmentDAO departmentDAO;
 
     public DepartmentService(DepartmentDAO departmentDAO) {

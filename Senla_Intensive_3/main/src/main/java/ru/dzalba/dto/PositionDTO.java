@@ -3,7 +3,6 @@ package ru.dzalba.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PositionDTO {
-
     @JsonProperty("id")
     private int id;
 

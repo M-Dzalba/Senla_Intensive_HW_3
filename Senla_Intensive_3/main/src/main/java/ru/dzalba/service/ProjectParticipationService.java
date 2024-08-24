@@ -1,5 +1,6 @@
 package ru.dzalba.service;
 
+import org.springframework.stereotype.Service;
 import ru.dzalba.dao.ProjectParticipationDAO;
 import ru.dzalba.dto.ProjectParticipationDTO;
 import ru.dzalba.models.ProjectParticipation;
@@ -8,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class ProjectParticipationService {
-
     private final ProjectParticipationDAO participationDAO;
 
     public ProjectParticipationService(ProjectParticipationDAO participationDAO) {

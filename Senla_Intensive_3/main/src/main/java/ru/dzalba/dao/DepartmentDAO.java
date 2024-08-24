@@ -1,13 +1,14 @@
 package ru.dzalba.dao;
 
+import org.springframework.stereotype.Component;
 import ru.dzalba.models.Department;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class DepartmentDAO {
-
     private final List<Department> departments = new ArrayList<>();
 
     public void addDepartment(Department department) {
