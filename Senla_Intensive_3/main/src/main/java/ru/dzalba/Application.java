@@ -82,8 +82,8 @@ public class Application {
         System.out.println("Updated Position: " + toJson(updatedPosition));
 
         System.out.println("Creating Employees...");
-        EmployeeDTO employee1 = new EmployeeDTO(1,"Bob Bobson", parseDate("1990-01-01"), "555-1234", "bob@example.com", 1, 1);
-        EmployeeDTO employee2 = new EmployeeDTO(2,"Ted Tedson", parseDate("1985-05-15"), "555-5678", "ted@example.com", 2, 2);
+        EmployeeDTO employee1 = new EmployeeDTO(1, "Bob Bobson", parseDate("1990-01-01"), "555-1234", "bob@example.com", 1, 1);
+        EmployeeDTO employee2 = new EmployeeDTO(2, "Ted Tedson", parseDate("1985-05-15"), "555-5678", "ted@example.com", 2, 2);
 
         employeeService.createEmployee(employee1);
         employeeService.createEmployee(employee2);
@@ -96,7 +96,7 @@ public class Application {
         employeeService.deleteEmployee(2);
 
         System.out.println("Updating Employee with ID 1...");
-        employee1.setPhoneNumber("555-9999");
+        employee1.setFullName("Bob Bobikoff");
         employeeService.updateEmployee(employee1);
 
         System.out.println("Reading Updated Employee with ID 1...");
@@ -105,7 +105,7 @@ public class Application {
 
         System.out.println("Creating Projects...");
         ProjectDTO project1 = new ProjectDTO(1, "Project Alpha", "Description Alpha", parseDate("2024-01-01"), parseDate("2024-12-31"));
-        ProjectDTO project2 = new ProjectDTO(2,"Project Beta", "Description Beta", parseDate("2024-02-01"), parseDate("2024-11-30"));
+        ProjectDTO project2 = new ProjectDTO(2, "Project Beta", "Description Beta", parseDate("2024-02-01"), parseDate("2024-11-30"));
 
         projectService.createProject(project1);
         projectService.createProject(project2);
@@ -148,8 +148,8 @@ public class Application {
         System.out.println("Reading Deleted Participation...");
         ProjectParticipationDTO deletedParticipation = participationService.getParticipation(1, 1).orElse(null);
         System.out.println("Deleted Participation: " + toJson(deletedParticipation));
-        context.close();
 
+        context.close();
     }
 
     private static Date parseDate(String dateString) {
