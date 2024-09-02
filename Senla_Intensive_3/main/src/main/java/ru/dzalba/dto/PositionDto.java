@@ -2,7 +2,7 @@ package ru.dzalba.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PositionDTO {
+public class PositionDto {
     @JsonProperty("id")
     private int id;
 
@@ -12,7 +12,7 @@ public class PositionDTO {
     @JsonProperty("salary")
     private double salary;
 
-    public PositionDTO(int id, String title, double salary) {
+    public PositionDto(int id, String title, double salary) {
         this.id = id;
         this.title = title;
         this.salary = salary;

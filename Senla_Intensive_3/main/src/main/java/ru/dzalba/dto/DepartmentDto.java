@@ -2,7 +2,7 @@ package ru.dzalba.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DepartmentDTO {
+public class DepartmentDto {
     @JsonProperty("id")
     private int id;
 
@@ -15,14 +15,14 @@ public class DepartmentDTO {
     @JsonProperty("parentLocationId")
     private Integer parentLocationId;
 
-    public DepartmentDTO(int id, String name, String location, Integer parentLocationId) {
+    public DepartmentDto(int id, String name, String location, Integer parentLocationId) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.parentLocationId = parentLocationId;
     }
 
-    public DepartmentDTO(int id, String name, String location) {
+    public DepartmentDto(int id, String name, String location) {
         this.id = id;
         this.name = name;
         this.location = location;

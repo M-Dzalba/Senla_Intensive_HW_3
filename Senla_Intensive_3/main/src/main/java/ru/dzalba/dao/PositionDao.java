@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class PositionDAO {
+public class PositionDao {
     private final List<Position> positions = new ArrayList<>();
 
     public void addPosition(Position position) {

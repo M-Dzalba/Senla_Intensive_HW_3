@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class EmployeeDAO {
+public class EmployeeDao {
 
     private final ConnectionHolder connectionHolder;
 
-    public EmployeeDAO(ConnectionHolder connectionHolder) {
+    public EmployeeDao(ConnectionHolder connectionHolder) {
         this.connectionHolder = connectionHolder;
     }
 

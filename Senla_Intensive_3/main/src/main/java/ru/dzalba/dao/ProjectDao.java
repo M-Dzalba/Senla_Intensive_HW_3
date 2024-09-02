@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class ProjectDAO {
+public class ProjectDao {
     private final List<Project> projects = new ArrayList<>();
 
     public void addProject(Project project) {

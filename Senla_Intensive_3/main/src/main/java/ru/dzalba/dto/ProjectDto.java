@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
-public class ProjectDTO {
+public class ProjectDto {
     @JsonProperty("id")
     private int id;
 
@@ -20,7 +20,7 @@ public class ProjectDTO {
     @JsonProperty("endDate")
     private Date endDate;
 
-    public ProjectDTO(int id, String name, String description, Date startDate, Date endDate) {
+    public ProjectDto(int id, String name, String description, Date startDate, Date endDate) {
         this.id = id;
         this.name = name;
         this.description = description;

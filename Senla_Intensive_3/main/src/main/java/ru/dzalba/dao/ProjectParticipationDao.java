@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class ProjectParticipationDAO {
+public class ProjectParticipationDao {
     private final List<ProjectParticipation> participations = new ArrayList<>();
 
     public void addParticipation(ProjectParticipation participation) {

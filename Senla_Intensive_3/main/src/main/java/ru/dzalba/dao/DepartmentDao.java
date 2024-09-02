@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class DepartmentDAO {
+public class DepartmentDao {
     private final List<Department> departments = new ArrayList<>();
 
     public void addDepartment(Department department) {

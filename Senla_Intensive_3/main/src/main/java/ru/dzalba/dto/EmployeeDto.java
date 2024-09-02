@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
-public class EmployeeDTO {
+public class EmployeeDto {
     @JsonProperty("id")
     private int id;
 
@@ -26,7 +26,7 @@ public class EmployeeDTO {
     @JsonProperty("departmentId")
     private int departmentId;
 
-    public EmployeeDTO(int id, String fullName, Date birthDate, String phoneNumber, String email,
+    public EmployeeDto(int id, String fullName, Date birthDate, String phoneNumber, String email,
                        int positionId, int departmentId) {
         this.id = id;
         this.fullName = fullName;
