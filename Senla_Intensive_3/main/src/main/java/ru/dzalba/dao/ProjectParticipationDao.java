@@ -3,9 +3,7 @@ package ru.dzalba.dao;
 import org.springframework.stereotype.Component;
 import ru.dzalba.models.ProjectParticipation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class ProjectParticipationDao {
@@ -20,8 +18,12 @@ public class ProjectParticipationDao {
     }
 
     public Optional<ProjectParticipation> getParticipation(int employeeId, int projectId) {
-        return participations.stream()
-                .filter(p -> p.getEmployeeId() == employeeId && p.getProjectId() == projectId)
+        return Optional.ofNullable(participations)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(participation -> Objects.equals(participation.getEmployeeId(),employeeId)
+                        && Objects.equals(participation.getProjectId(),projectId))
                 .findFirst();
     }
 
