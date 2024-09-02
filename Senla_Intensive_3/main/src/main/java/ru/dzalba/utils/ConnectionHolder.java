@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class ConnectionHolder {
@@ -29,13 +30,25 @@ public class ConnectionHolder {
                 connection.close();
                 connectionMap.remove(connection);
             }
+
+            if (!transactional) {
+                Optional<Connection> freeConnection = connectionMap.entrySet().stream()
+                        .filter(entry -> !entry.getValue())
+                        .map(Map.Entry::getKey)
+                        .findFirst();
+
+                if (freeConnection.isPresent()) {
+                    connection = freeConnection.get();
+                    connectionThreadLocal.set(connection);
+                    transactionThreadLocal.set(false);
+                    return connection;
+                }
+            }
+
             connection = dataSource.getConnection();
             connectionThreadLocal.set(connection);
             transactionThreadLocal.set(transactional);
             connectionMap.put(connection, transactional);
-            if (transactional) {
-                connection.setAutoCommit(false);
-            }
         } else if (transactional && !isCurrentTransactional) {
             throw new IllegalStateException("Cannot reuse a non-transactional connection for a transactional operation.");
         }
@@ -56,6 +69,8 @@ public class ConnectionHolder {
         Connection connection = connectionThreadLocal.get();
         if (connection != null && transactionThreadLocal.get()) {
             connection.commit();
+            connection.setAutoCommit(true);
+            System.out.println("Transaction committed.");
         } else {
             throw new IllegalStateException("No transactional connection found to commit.");
         }
@@ -65,6 +80,8 @@ public class ConnectionHolder {
         Connection connection = connectionThreadLocal.get();
         if (connection != null && transactionThreadLocal.get()) {
             connection.rollback();
+            connection.setAutoCommit(true);
+            System.out.println("Transaction rolled back.");
         } else {
             throw new IllegalStateException("No transactional connection found to rollback.");
         }
@@ -74,7 +91,11 @@ public class ConnectionHolder {
         Connection connection = connectionThreadLocal.get();
         if (connection != null) {
             if (!connection.isClosed()) {
+                if (transactionThreadLocal.get() != null && transactionThreadLocal.get()) {
+                    throw new IllegalStateException("Transactional connection cannot be closed before commit/rollback.");
+                }
                 connection.close();
+                System.out.println("Connection closed.");
             }
             connectionThreadLocal.remove();
             transactionThreadLocal.remove();

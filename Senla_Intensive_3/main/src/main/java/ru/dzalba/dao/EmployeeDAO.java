@@ -37,6 +37,7 @@ public class EmployeeDAO {
             statement.setInt(7, employee.getDepartmentId());
             int rowsAffected = statement.executeUpdate();
             System.out.println("addEmployee - Rows affected: " + rowsAffected);
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to add employee", e);
         } finally {
@@ -145,8 +146,12 @@ public class EmployeeDAO {
             statement.setInt(5, employee.getPositionId());
             statement.setInt(6, employee.getDepartmentId());
             statement.setInt(7, employee.getId());
+
             int rowsAffected = statement.executeUpdate();
             System.out.println("updateEmployee - Rows affected: " + rowsAffected);
+            if (rowsAffected == 0) {
+                System.out.println("No rows updated. Possible issue with ID: " + employee.getId());
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update employee", e);
         } finally {

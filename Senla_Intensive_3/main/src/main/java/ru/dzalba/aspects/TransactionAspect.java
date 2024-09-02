@@ -23,6 +23,9 @@ public class TransactionAspect {
 
         try {
             connection = connectionHolder.getConnection(true);
+            if (connection == null) {
+                throw new SQLException("Failed to obtain connection from ConnectionHolder.");
+            }
             System.out.println("Getting connection from TransactionAspect...");
 
             connectionHolder.beginTransaction();
@@ -37,16 +40,24 @@ public class TransactionAspect {
         } catch (SQLException | RuntimeException e) {
             System.out.println("Exception in TransactionAspect: " + e.getMessage());
             if (connection != null) {
-                System.out.println("Rolling back transaction...");
-                connectionHolder.rollback();
-                System.out.println("Transaction rolled back.");
+                try {
+                    System.out.println("Rolling back transaction...");
+                    connectionHolder.rollback();
+                    System.out.println("Transaction rolled back.");
+                } catch (SQLException rollbackEx) {
+                    System.out.println("Rollback failed: " + rollbackEx.getMessage());
+                }
             }
             throw e;
         } finally {
             if (connection != null) {
                 System.out.println("Closing connection...");
-                connectionHolder.closeConnection();
-                System.out.println("Connection closed.");
+                try {
+                    connectionHolder.closeConnection();
+                    System.out.println("Connection closed.");
+                } catch (SQLException closeEx) {
+                    System.out.println("Failed to close connection: " + closeEx.getMessage());
+                }
             }
         }
     }

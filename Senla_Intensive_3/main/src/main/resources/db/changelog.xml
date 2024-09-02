@@ -67,25 +67,4 @@
         </preConditions>
         <sqlFile encoding="utf8" path="sql/06.create_indexes.sql" relativeToChangelogFile="true"/>
     </changeSet>
-
-<!--    <changeSet id="hr-populate" author="Max Dzalba">-->
-<!--        <preConditions onFail="MARK_RAN">-->
-<!--            <not>-->
-<!--                <sqlCheck expectedResult="0">-->
-<!--                    SELECT COUNT(*) FROM Positions WHERE id IN (1, 2);-->
-<!--                </sqlCheck>-->
-<!--            </not>-->
-<!--            <not>-->
-<!--                <sqlCheck expectedResult="0">-->
-<!--                    SELECT COUNT(*) FROM Departments WHERE id IN (1, 2);-->
-<!--                </sqlCheck>-->
-<!--            </not>-->
-<!--        </preConditions>-->
-<!--        <sqlFile encoding="utf8" path="sql/07.populate.sql" relativeToChangelogFile="true"/>-->
-<!--    </changeSet>-->
-
-<!--    <changeSet id="hr-truncate" author="Max Dzalba">-->
-<!--        <sqlFile encoding="utf8" path="sql/08.truncate.sql" relativeToChangelogFile="true"/>-->
-<!--    </changeSet>-->
-
 </databaseChangeLog>
