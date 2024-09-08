@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dzalba.dto.ProjectDTO;
+import ru.dzalba.dto.ProjectDto;
 import ru.dzalba.service.ProjectService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createProject(@RequestBody ProjectDTO projectDTO) {
-        ProjectDTO createdProject = projectService.createProject(projectDTO);
+    public ResponseEntity<String> createProject(@RequestBody ProjectDto projectDTO) {
+        ProjectDto createdProject = projectService.createProject(projectDTO);
         try {
             String json = objectMapper.writeValueAsString(createdProject);
             return new ResponseEntity<>(json, HttpStatus.CREATED);
@@ -36,7 +36,7 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<String> getAllProjects() {
-        List<ProjectDTO> projects = projectService.getAllProjects();
+        List<ProjectDto> projects = projectService.getAllProjects();
         try {
             String json = objectMapper.writeValueAsString(projects);
             return new ResponseEntity<>(json, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getProjectById(@PathVariable int id) {
-        Optional<ProjectDTO> project = projectService.getProjectById(id);
+        Optional<ProjectDto> project = projectService.getProjectById(id);
         if (project.isPresent()) {
             try {
                 String json = objectMapper.writeValueAsString(project.get());
@@ -61,10 +61,10 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProject(@PathVariable int id, @RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity<String> updateProject(@PathVariable int id, @RequestBody ProjectDto projectDTO) {
         if (projectService.getProjectById(id).isPresent()) {
             projectDTO.setId(id);
-            Optional<ProjectDTO> updatedProject = projectService.updateProject(projectDTO);
+            Optional<ProjectDto> updatedProject = projectService.updateProject(projectDTO);
             if (updatedProject.isPresent()) {
                 try {
                     String json = objectMapper.writeValueAsString(updatedProject.get());

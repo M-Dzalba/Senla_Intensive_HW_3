@@ -1,8 +1,8 @@
 package ru.dzalba.service;
 
 import org.springframework.stereotype.Service;
-import ru.dzalba.dao.DepartmentDAO;
-import ru.dzalba.dto.DepartmentDTO;
+import ru.dzalba.dao.DepartmentDao;
+import ru.dzalba.dto.DepartmentDto;
 import ru.dzalba.models.Department;
 
 import java.util.List;
@@ -11,33 +11,33 @@ import java.util.stream.Collectors;
 
 @Service
 public class DepartmentService {
-    private final DepartmentDAO departmentDAO;
+    private final DepartmentDao departmentDAO;
 
-    public DepartmentService(DepartmentDAO departmentDAO) {
+    public DepartmentService(DepartmentDao departmentDAO) {
         this.departmentDAO = departmentDAO;
     }
 
-    public DepartmentDTO createDepartment(DepartmentDTO departmentDTO) {
+    public DepartmentDto createDepartment(DepartmentDto departmentDTO) {
         Department department = new Department(departmentDTO.getId(), departmentDTO.getName(),
                 departmentDTO.getLocation(), departmentDTO.getParentLocationId());
         departmentDAO.addDepartment(department);
         return departmentDTO;
     }
 
-    public List<DepartmentDTO> getAllDepartments() {
+    public List<DepartmentDto> getAllDepartments() {
         return departmentDAO.getAllDepartments().stream()
-                .map(department -> new DepartmentDTO(department.getId(), department.getName(),
+                .map(department -> new DepartmentDto(department.getId(), department.getName(),
                         department.getLocation(), department.getParentLocationId()))
                 .collect(Collectors.toList());
     }
 
-    public Optional<DepartmentDTO> getDepartmentById(int id) {
+    public Optional<DepartmentDto> getDepartmentById(int id) {
         return departmentDAO.getDepartmentById(id)
-                .map(department -> new DepartmentDTO(department.getId(), department.getName(),
+                .map(department -> new DepartmentDto(department.getId(), department.getName(),
                         department.getLocation(), department.getParentLocationId()));
     }
 
-    public Optional<DepartmentDTO> updateDepartment(DepartmentDTO departmentDTO) {
+    public Optional<DepartmentDto> updateDepartment(DepartmentDto departmentDTO) {
         Department department = new Department(departmentDTO.getId(), departmentDTO.getName(),
                 departmentDTO.getLocation(), departmentDTO.getParentLocationId());
         departmentDAO.updateDepartment(department);

@@ -2,8 +2,8 @@ package ru.dzalba.service;
 
 import org.springframework.stereotype.Service;
 import ru.dzalba.annotations.Transaction;
-import ru.dzalba.dao.EmployeeDAO;
-import ru.dzalba.dto.EmployeeDTO;
+import ru.dzalba.dao.EmployeeDao;
+import ru.dzalba.dto.EmployeeDto;
 import ru.dzalba.models.Employee;
 
 import java.sql.SQLException;
@@ -13,14 +13,14 @@ import java.util.Optional;
 @Service
 public class EmployeeService {
 
-    private final EmployeeDAO employeeDAO;
+    private final EmployeeDao employeeDAO;
 
-    public EmployeeService(EmployeeDAO employeeDAO) {
+    public EmployeeService(EmployeeDao employeeDAO) {
         this.employeeDAO = employeeDAO;
     }
 
     @Transaction
-    public void createEmployee(EmployeeDTO employeeDTO) {
+    public void createEmployee(EmployeeDto employeeDTO) {
         Employee employee = new Employee(
                 employeeDTO.getId(),
                 employeeDTO.getFullName(),
@@ -40,11 +40,11 @@ public class EmployeeService {
         }
     }
 
-    public List<EmployeeDTO> getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
         try {
             List<Employee> employees = employeeDAO.getAllEmployees();
             return employees.stream()
-                    .map(employee -> new EmployeeDTO(
+                    .map(employee -> new EmployeeDto(
                             employee.getId(),
                             employee.getFullName(),
                             employee.getBirthDate(),
@@ -60,7 +60,7 @@ public class EmployeeService {
     }
 
     @Transaction
-    public void updateEmployee(EmployeeDTO employeeDTO) {
+    public void updateEmployee(EmployeeDto employeeDTO) {
         Employee employee = new Employee(
                 employeeDTO.getId(),
                 employeeDTO.getFullName(),
@@ -86,11 +86,11 @@ public class EmployeeService {
         }
     }
 
-    public Optional<EmployeeDTO> getEmployeeById(int id) {
+    public Optional<EmployeeDto> getEmployeeById(int id) {
         try {
             Employee employee = employeeDAO.getEmployeeById(id);
             return Optional.ofNullable(employee)
-                    .map(e -> new EmployeeDTO(
+                    .map(e -> new EmployeeDto(
                             e.getId(),
                             e.getFullName(),
                             e.getBirthDate(),

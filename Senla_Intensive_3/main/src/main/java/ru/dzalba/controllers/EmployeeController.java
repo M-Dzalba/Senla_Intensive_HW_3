@@ -2,7 +2,7 @@ package ru.dzalba.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.dzalba.dto.EmployeeDTO;
+import ru.dzalba.dto.EmployeeDto;
 import ru.dzalba.service.EmployeeService;
 
 import java.sql.Date;
@@ -20,12 +20,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/all")
-    public List<EmployeeDTO> getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
         return employeeService.getAllEmployees();
     }
 
     @PostMapping("/add")
-    public String addEmployee(@RequestBody EmployeeDTO employeeDTO) {
+    public String addEmployee(@RequestBody EmployeeDto employeeDTO) {
         java.util.Date birthDate = employeeDTO.getBirthDate();
         Date sqlBirthDate = Date.valueOf(String.valueOf(birthDate));
 
@@ -36,7 +36,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/update/{id}")
-    public String updateEmployee(@PathVariable int id, @RequestBody EmployeeDTO employeeDTO) {
+    public String updateEmployee(@PathVariable int id, @RequestBody EmployeeDto employeeDTO) {
         employeeDTO.setId(id);
         java.util.Date birthDate = employeeDTO.getBirthDate();
         Date sqlBirthDate = Date.valueOf(String.valueOf(birthDate));

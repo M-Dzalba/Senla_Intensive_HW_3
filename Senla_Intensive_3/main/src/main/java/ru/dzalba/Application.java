@@ -7,7 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.dzalba.config.ApplicationConfig;
-import ru.dzalba.dao.EmployeeDAO;
+import ru.dzalba.dao.EmployeeDao;
 import ru.dzalba.dto.*;
 import ru.dzalba.service.*;
 import ru.dzalba.utils.ConnectionHolder;
@@ -38,14 +38,14 @@ public class Application {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
         DataSource dataSource = context.getBean(DataSource.class);
-        EmployeeService employeeService = new EmployeeService(new EmployeeDAO(new ConnectionHolder(dataSource)));
+        EmployeeService employeeService = new EmployeeService(new EmployeeDao(new ConnectionHolder(dataSource)));
         AtomicInteger randomId1 = new AtomicInteger();
         AtomicInteger randomId2 = new AtomicInteger();
 
         executor.execute(() -> {
             try {
                 randomId1.set(random.nextInt(100));
-                employeeService.createEmployee(new EmployeeDTO(randomId1.get(), "John First", new Date(), "1234567890", "john.first@example.com", 1, 1));
+                employeeService.createEmployee(new EmployeeDto(randomId1.get(), "John First", new Date(), "1234567890", "john.first@example.com", 1, 1));
                 System.out.println("Employee 1 with ID " + randomId1 + " created.");
                 showEmployee(employeeService, randomId1.get());
             } catch (Exception e) {
@@ -56,7 +56,7 @@ public class Application {
         executor.execute(() -> {
             try {
                 randomId2.set(random.nextInt(100));
-                employeeService.createEmployee(new EmployeeDTO(randomId2.get(), "Jane Smith", new Date(), "0987654321", "jane.smith@example.com", 2, 2));
+                employeeService.createEmployee(new EmployeeDto(randomId2.get(), "Jane Smith", new Date(), "0987654321", "jane.smith@example.com", 2, 2));
                 System.out.println("Employee 2 with ID " + randomId2 + " created.");
                 showEmployee(employeeService, randomId2.get());
             } catch (Exception e) {
@@ -66,9 +66,9 @@ public class Application {
 
         executor.execute(() -> {
             try {
-                Thread.sleep(1000); // Ensure previous tasks are processed
+                Thread.sleep(1000);
                 int employeeIdToUpdate = randomId1.get();
-                EmployeeDTO updatedEmployee = new EmployeeDTO(employeeIdToUpdate, "John First-Updated", new Date(), "1234567890", "john.updated@example.com", 1, 1);
+                EmployeeDto updatedEmployee = new EmployeeDto(employeeIdToUpdate, "John First-Updated", new Date(), "1234567890", "john.updated@example.com", 1, 1);
                 employeeService.updateEmployee(updatedEmployee);
                 System.out.println("Employee with ID " + employeeIdToUpdate + " updated.");
                 showEmployee(employeeService, employeeIdToUpdate);
@@ -79,7 +79,7 @@ public class Application {
 
         executor.execute(() -> {
             try {
-                Thread.sleep(1000); // Ensure previous tasks are processed
+                Thread.sleep(1000);
                 int employeeIdToDelete = randomId2.get();
                 employeeService.deleteEmployee(employeeIdToDelete);
                 System.out.println("Employee with ID " + employeeIdToDelete + " deleted.");
@@ -103,7 +103,7 @@ public class Application {
     }
 
     private static void showEmployee(EmployeeService employeeService, int id) {
-        Optional<EmployeeDTO> employee = employeeService.getEmployeeById(id);
+        Optional<EmployeeDto> employee = employeeService.getEmployeeById(id);
         if (employee.isPresent()) {
             System.out.println("Employee details: " + toJson(employee.get()));
         } else {

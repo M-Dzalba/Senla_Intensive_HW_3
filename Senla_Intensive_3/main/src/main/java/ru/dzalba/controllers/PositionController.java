@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dzalba.dto.PositionDTO;
+import ru.dzalba.dto.PositionDto;
 import ru.dzalba.service.PositionService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class PositionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createPosition(@RequestBody PositionDTO positionDTO) {
-        PositionDTO createdPosition = positionService.createPosition(positionDTO);
+    public ResponseEntity<String> createPosition(@RequestBody PositionDto positionDTO) {
+        PositionDto createdPosition = positionService.createPosition(positionDTO);
         try {
             String json = objectMapper.writeValueAsString(createdPosition);
             return new ResponseEntity<>(json, HttpStatus.CREATED);
@@ -36,7 +36,7 @@ public class PositionController {
 
     @GetMapping
     public ResponseEntity<String> getAllPositions() {
-        List<PositionDTO> positions = positionService.getAllPositions();
+        List<PositionDto> positions = positionService.getAllPositions();
         try {
             String json = objectMapper.writeValueAsString(positions);
             return new ResponseEntity<>(json, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class PositionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getPositionById(@PathVariable int id) {
-        Optional<PositionDTO> position = positionService.getPositionById(id);
+        Optional<PositionDto> position = positionService.getPositionById(id);
         if (position.isPresent()) {
             try {
                 String json = objectMapper.writeValueAsString(position.get());
@@ -61,10 +61,10 @@ public class PositionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updatePosition(@PathVariable int id, @RequestBody PositionDTO positionDTO) {
+    public ResponseEntity<String> updatePosition(@PathVariable int id, @RequestBody PositionDto positionDTO) {
         if (positionService.getPositionById(id).isPresent()) {
             positionDTO.setId(id);
-            Optional<PositionDTO> updatedPosition = positionService.updatePosition(positionDTO);
+            Optional<PositionDto> updatedPosition = positionService.updatePosition(positionDTO);
             if (updatedPosition.isPresent()) {
                 try {
                     String json = objectMapper.writeValueAsString(updatedPosition.get());

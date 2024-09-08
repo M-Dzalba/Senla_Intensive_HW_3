@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dzalba.dto.ProjectParticipationDTO;
+import ru.dzalba.dto.ProjectParticipationDto;
 import ru.dzalba.service.ProjectParticipationService;
 
 import java.util.Optional;
@@ -23,8 +23,8 @@ public class ProjectParticipationController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addParticipation(@RequestBody ProjectParticipationDTO participationDTO) {
-        ProjectParticipationDTO addedParticipation = participationService.addParticipation(participationDTO);
+    public ResponseEntity<String> addParticipation(@RequestBody ProjectParticipationDto participationDTO) {
+        ProjectParticipationDto addedParticipation = participationService.addParticipation(participationDTO);
         try {
             String json = objectMapper.writeValueAsString(addedParticipation);
             return new ResponseEntity<>(json, HttpStatus.CREATED);
@@ -35,7 +35,7 @@ public class ProjectParticipationController {
 
     @GetMapping("/{employeeId}/{projectId}")
     public ResponseEntity<String> getParticipation(@PathVariable int employeeId, @PathVariable int projectId) {
-        Optional<ProjectParticipationDTO> participation = participationService.getParticipation(employeeId, projectId);
+        Optional<ProjectParticipationDto> participation = participationService.getParticipation(employeeId, projectId);
         if (participation.isPresent()) {
             try {
                 String json = objectMapper.writeValueAsString(participation.get());
@@ -50,11 +50,11 @@ public class ProjectParticipationController {
 
     @PutMapping("/{employeeId}/{projectId}")
     public ResponseEntity<String> updateParticipation(@PathVariable int employeeId, @PathVariable int projectId,
-                                                      @RequestBody ProjectParticipationDTO participationDTO) {
+                                                      @RequestBody ProjectParticipationDto participationDTO) {
         if (participationService.getParticipation(employeeId, projectId).isPresent()) {
             participationDTO.setEmployeeId(employeeId);
             participationDTO.setProjectId(projectId);
-            Optional<ProjectParticipationDTO> updatedParticipation = participationService.updateParticipation(participationDTO);
+            Optional<ProjectParticipationDto> updatedParticipation = participationService.updateParticipation(participationDTO);
             if (updatedParticipation.isPresent()) {
                 try {
                     String json = objectMapper.writeValueAsString(updatedParticipation.get());

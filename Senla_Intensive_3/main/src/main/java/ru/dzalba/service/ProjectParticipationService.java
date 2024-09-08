@@ -1,8 +1,8 @@
 package ru.dzalba.service;
 
 import org.springframework.stereotype.Service;
-import ru.dzalba.dao.ProjectParticipationDAO;
-import ru.dzalba.dto.ProjectParticipationDTO;
+import ru.dzalba.dao.ProjectParticipationDao;
+import ru.dzalba.dto.ProjectParticipationDto;
 import ru.dzalba.models.ProjectParticipation;
 
 import java.util.List;
@@ -11,33 +11,33 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProjectParticipationService {
-    private final ProjectParticipationDAO participationDAO;
+    private final ProjectParticipationDao participationDAO;
 
-    public ProjectParticipationService(ProjectParticipationDAO participationDAO) {
+    public ProjectParticipationService(ProjectParticipationDao participationDAO) {
         this.participationDAO = participationDAO;
     }
 
-    public ProjectParticipationDTO addParticipation(ProjectParticipationDTO participationDTO) {
+    public ProjectParticipationDto addParticipation(ProjectParticipationDto participationDTO) {
         ProjectParticipation participation = new ProjectParticipation(participationDTO.getEmployeeId(), participationDTO.getProjectId(),
                 participationDTO.getRole(), participationDTO.getStartDate(), participationDTO.getEndDate());
         participationDAO.addParticipation(participation);
         return participationDTO;
     }
 
-    public List<ProjectParticipationDTO> getAllParticipations() {
+    public List<ProjectParticipationDto> getAllParticipations() {
         return participationDAO.getAllParticipations().stream()
-                .map(p -> new ProjectParticipationDTO(p.getEmployeeId(), p.getProjectId(), p.getRole(),
+                .map(p -> new ProjectParticipationDto(p.getEmployeeId(), p.getProjectId(), p.getRole(),
                         p.getStartDate(), p.getEndDate()))
                 .collect(Collectors.toList());
     }
 
-    public Optional<ProjectParticipationDTO> getParticipation(int employeeId, int projectId) {
+    public Optional<ProjectParticipationDto> getParticipation(int employeeId, int projectId) {
         return participationDAO.getParticipation(employeeId, projectId)
-                .map(p -> new ProjectParticipationDTO(p.getEmployeeId(), p.getProjectId(), p.getRole(),
+                .map(p -> new ProjectParticipationDto(p.getEmployeeId(), p.getProjectId(), p.getRole(),
                         p.getStartDate(), p.getEndDate()));
     }
 
-    public Optional<ProjectParticipationDTO> updateParticipation(ProjectParticipationDTO participationDTO) {
+    public Optional<ProjectParticipationDto> updateParticipation(ProjectParticipationDto participationDTO) {
         ProjectParticipation participation = new ProjectParticipation(participationDTO.getEmployeeId(), participationDTO.getProjectId(),
                 participationDTO.getRole(), participationDTO.getStartDate(), participationDTO.getEndDate());
         participationDAO.updateParticipation(participation);

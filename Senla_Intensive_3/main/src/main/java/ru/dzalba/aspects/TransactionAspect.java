@@ -48,7 +48,7 @@ public class TransactionAspect {
                     System.out.println("Rollback failed: " + rollbackEx.getMessage());
                 }
             }
-            throw e;
+            throw new RuntimeException("Error during the transaction");
         } finally {
             if (connection != null) {
                 System.out.println("Closing connection...");

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dzalba.dto.DepartmentDTO;
+import ru.dzalba.dto.DepartmentDto;
 import ru.dzalba.service.DepartmentService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
-        DepartmentDTO createdDepartment = departmentService.createDepartment(departmentDTO);
+    public ResponseEntity<String> createDepartment(@RequestBody DepartmentDto departmentDTO) {
+        DepartmentDto createdDepartment = departmentService.createDepartment(departmentDTO);
         try {
             String json = objectMapper.writeValueAsString(createdDepartment);
             return new ResponseEntity<>(json, HttpStatus.CREATED);
@@ -36,7 +36,7 @@ public class DepartmentController {
 
     @GetMapping
     public ResponseEntity<String> getAllDepartments() {
-        List<DepartmentDTO> departments = departmentService.getAllDepartments();
+        List<DepartmentDto> departments = departmentService.getAllDepartments();
         try {
             String json = objectMapper.writeValueAsString(departments);
             return new ResponseEntity<>(json, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getDepartmentById(@PathVariable int id) {
-        Optional<DepartmentDTO> department = departmentService.getDepartmentById(id);
+        Optional<DepartmentDto> department = departmentService.getDepartmentById(id);
         if (department.isPresent()) {
             try {
                 String json = objectMapper.writeValueAsString(department.get());
@@ -61,10 +61,10 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateDepartment(@PathVariable int id, @RequestBody DepartmentDTO departmentDTO) {
+    public ResponseEntity<String> updateDepartment(@PathVariable int id, @RequestBody DepartmentDto departmentDTO) {
         if (departmentService.getDepartmentById(id).isPresent()) {
             departmentDTO.setId(id);
-            Optional<DepartmentDTO> updatedDepartment = departmentService.updateDepartment(departmentDTO);
+            Optional<DepartmentDto> updatedDepartment = departmentService.updateDepartment(departmentDTO);
             if (updatedDepartment.isPresent()) {
                 try {
                     String json = objectMapper.writeValueAsString(updatedDepartment.get());
