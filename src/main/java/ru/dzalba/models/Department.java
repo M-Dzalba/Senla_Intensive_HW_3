@@ -5,11 +5,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "departments")
-public class Department {
+public class Department implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -32,7 +32,7 @@ public class Department {
         this.parentLocationId = parentLocationId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

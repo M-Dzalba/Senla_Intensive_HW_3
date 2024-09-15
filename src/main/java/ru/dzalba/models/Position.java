@@ -5,11 +5,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "position")
-public class Position {
+public class Position implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -28,7 +28,7 @@ public class Position {
         this.salary = salary;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -23,15 +23,6 @@ public class PositionRepository extends AbstractRepository<Position> {
     }
 
     @Transactional
-    public void save(Position position) {
-        if (position.getId() == 0) {
-            entityManager.persist(position);
-        } else {
-            entityManager.merge(position);
-        }
-    }
-
-    @Transactional
     public void deleteById(int id) {
         Position position = findById(id);
         if (position != null) {

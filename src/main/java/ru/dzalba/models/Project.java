@@ -6,11 +6,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "projects")
-public class Project {
+public class Project implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -39,7 +39,7 @@ public class Project {
         this.endDate = endDate;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

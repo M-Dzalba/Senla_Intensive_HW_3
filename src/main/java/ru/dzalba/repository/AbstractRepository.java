@@ -1,5 +1,7 @@
 package ru.dzalba.repository;
 
+import ru.dzalba.models.Identifiable;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Transactional
-public abstract class AbstractRepository<T> {
+public abstract class AbstractRepository<T extends Identifiable> {
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -20,8 +22,13 @@ public abstract class AbstractRepository<T> {
         this.entityClass = entityClass;
     }
 
-    public void save(T entity) {
-        entityManager.persist(entity);
+    public T save(T entity) {
+        if (entity.getId() == null) {
+            entityManager.persist(entity);
+        } else {
+            return entityManager.merge(entity);
+        }
+        return entity;
     }
 
     public void update(T entity) {

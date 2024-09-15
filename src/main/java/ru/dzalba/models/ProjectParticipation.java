@@ -5,11 +5,11 @@ import java.util.Date;
 
 @Entity
 @Table(name = "project_participations")
-public class ProjectParticipation {
+public class ProjectParticipation implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeeId")
@@ -41,7 +41,7 @@ public class ProjectParticipation {
         this.endDate = endDate;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
