@@ -1,17 +1,17 @@
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.dzalba.repository.DepartmentRepository;
-import ru.dzalba.repository.EmployeeRepository;
-import ru.dzalba.repository.PositionRepository;
 import ru.dzalba.models.Department;
 import ru.dzalba.models.Employee;
 import ru.dzalba.models.Position;
+import ru.dzalba.repository.DepartmentRepository;
+import ru.dzalba.repository.EmployeeRepository;
+import ru.dzalba.repository.PositionRepository;
 
-import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +33,6 @@ public class EmployeeRepositoryTest {
         Position position = new Position("Developer", 50000);
         Department department = new Department("IT", "New York", 1);
 
-
         positionRepository.save(position);
         departmentRepository.save(department);
 
@@ -47,7 +46,7 @@ public class EmployeeRepositoryTest {
 
         employeeRepository.save(employee);
 
-        Employee foundEmployee = employeeRepository.findById(employee.getId());
+        Employee foundEmployee = employeeRepository.findById(employee.getId()).orElse(null);
         assertNotNull(foundEmployee);
         assertEquals("John Doe", foundEmployee.getFullName());
     }
@@ -84,7 +83,7 @@ public class EmployeeRepositoryTest {
         employeeRepository.save(employee1);
         employeeRepository.save(employee2);
 
-        List<Employee> allEmployees = employeeRepository.findAll();
+        List<Employee> allEmployees = employeeRepository.findAllWithDetails();
         assertNotNull(allEmployees);
         assertEquals(2, allEmployees.size());
     }
@@ -113,7 +112,7 @@ public class EmployeeRepositoryTest {
 
         employeeRepository.save(employee);
 
-        Employee updatedEmployee = employeeRepository.findById(employee.getId());
+        Employee updatedEmployee = employeeRepository.findById(employee.getId()).orElse(null);
         assertNotNull(updatedEmployee);
         assertEquals("John Updated", updatedEmployee.getFullName());
         assertEquals("1111111111", updatedEmployee.getPhoneNumber());
@@ -141,11 +140,9 @@ public class EmployeeRepositoryTest {
 
         employeeRepository.delete(savedEmployee);
 
-        try {
-            employeeRepository.findById(employeeId);
-            fail("Expected NoResultException to be thrown");
-        } catch (NoResultException e) {
-            System.out.println("Test passed");
-        }
+        assertThrows(NoSuchElementException.class, () -> {
+            employeeRepository.findById(employeeId)
+                    .orElseThrow(() -> new NoSuchElementException("Employee not found"));
+        });
     }
 }

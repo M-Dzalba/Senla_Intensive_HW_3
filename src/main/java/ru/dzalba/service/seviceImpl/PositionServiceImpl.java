@@ -41,31 +41,25 @@ public class PositionServiceImpl implements PositionService {
     public Optional<PositionDto> getPositionById(int id) {
         validateId(id);
         return Optional.ofNullable(positionRepository.findById(id))
-                .map(position -> new PositionDto(position.getId(), position.getTitle(), position.getSalary()));
+                .map(position -> new PositionDto(position.get().getId(), position.get().getTitle(), position.get().getSalary()));
     }
 
     @Override
     public Optional<PositionDto> updatePosition(PositionDto positionDTO) {
         validatePositionDto(positionDTO);
-        Position position = positionRepository.findById(positionDTO.getId());
-        if (position != null) {
-            position.setTitle(positionDTO.getTitle());
-            position.setSalary(positionDTO.getSalary());
-            positionRepository.update(position);
-            return Optional.of(positionDTO);
-        }
-        return Optional.empty();
+        Position position = positionRepository.findById(positionDTO.getId()).orElseThrow();
+        position.setTitle(positionDTO.getTitle());
+        position.setSalary(positionDTO.getSalary());
+        positionRepository.update(Optional.of(position));
+        return Optional.of(positionDTO);
     }
 
     @Override
     public boolean deletePosition(int id) {
         validateId(id);
-        Position position = positionRepository.findById(id);
-        if (position != null) {
-            positionRepository.delete(position);
-            return true;
-        }
-        return false;
+        Position position = positionRepository.findById(id).orElseThrow();
+        positionRepository.delete(position);
+        return true;
     }
 
     private void validatePositionDto(PositionDto positionDTO) {

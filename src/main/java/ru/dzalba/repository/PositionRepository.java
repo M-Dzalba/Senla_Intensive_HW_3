@@ -24,10 +24,8 @@ public class PositionRepository extends AbstractRepository<Position> {
 
     @Transactional
     public void deleteById(int id) {
-        Position position = findById(id);
-        if (position != null) {
-            entityManager.remove(position);
-        }
+        Position position = findById(id).orElseThrow();
+        entityManager.remove(position);
     }
 
     public List<Position> findByName(String name) {

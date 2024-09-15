@@ -45,18 +45,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateEmployee(EmployeeDto employeeDTO) {
-        Employee employee = convertToEntity(employeeDTO);
+        Optional<Employee> employee = Optional.of(convertToEntity(employeeDTO));
         employeeRepository.update(employee);
     }
 
     @Override
     public void deleteEmployee(int id) {
-        Employee employee = employeeRepository.findById(id);
-        if (employee != null) {
-            employeeRepository.delete(employee);
-        } else {
-            throw new IllegalArgumentException("Employee not found");
-        }
+        Employee employee = employeeRepository.findById(id).orElseThrow();
+        employeeRepository.delete(employee);
     }
 
     @Override
@@ -105,7 +101,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private Position findPositionById(int id) {
-        Optional<Position> optionalPosition = Optional.ofNullable(positionRepository.findById(id));
+        Optional<Position> optionalPosition = positionRepository.findById(id);
         if (optionalPosition.isPresent()) {
             return optionalPosition.get();
         } else {
@@ -114,7 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private Department findDepartmentById(int id) {
-        Optional<Department> optionalDepartment = Optional.ofNullable(departmentRepository.findById(id));
+        Optional<Department> optionalDepartment = departmentRepository.findById(id);
         if (optionalDepartment.isPresent()) {
             return optionalDepartment.get();
         } else {

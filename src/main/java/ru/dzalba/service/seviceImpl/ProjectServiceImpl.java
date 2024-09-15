@@ -89,31 +89,28 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Optional<ProjectDto> getProjectById(int id) {
-        Project project = projectRepository.findById(id);
-        if (project != null) {
-            return Optional.of(new ProjectDto(
-                    project.getId(),
-                    project.getName(),
-                    project.getDescription(),
-                    project.getStartDate(),
-                    project.getEndDate(),
-                    project.getProjectParticipations().stream()
-                            .map(participation -> new ProjectParticipationDto(
-                                    participation.getEmployee().getId(),
-                                    participation.getProject().getId(),
-                                    participation.getRole(),
-                                    participation.getStartDate(),
-                                    participation.getEndDate()
-                            ))
-                            .collect(Collectors.toSet())
-            ));
-        }
-        return Optional.empty();
+        Project project = projectRepository.findById(id).orElseThrow();
+        return Optional.of(new ProjectDto(
+                project.getId(),
+                project.getName(),
+                project.getDescription(),
+                project.getStartDate(),
+                project.getEndDate(),
+                project.getProjectParticipations().stream()
+                        .map(participation -> new ProjectParticipationDto(
+                                participation.getEmployee().getId(),
+                                participation.getProject().getId(),
+                                participation.getRole(),
+                                participation.getStartDate(),
+                                participation.getEndDate()
+                        ))
+                        .collect(Collectors.toSet())
+        ));
     }
 
     @Override
     public Optional<ProjectDto> updateProject(ProjectDto projectDTO) {
-        Optional<Project> existingProject = Optional.ofNullable(projectRepository.findById(projectDTO.getId()));
+        Optional<Project> existingProject = projectRepository.findById(projectDTO.getId());
 
         if (existingProject.isPresent()) {
             Project project = existingProject.get();
@@ -185,7 +182,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean deleteProject(int id) {
-        Optional<Project> project = Optional.ofNullable(projectRepository.findById(id));
+        Optional<Project> project = projectRepository.findById(id);
 
         if (project.isPresent()) {
             projectRepository.delete(project.get());

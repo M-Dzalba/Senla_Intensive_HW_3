@@ -38,15 +38,9 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
     public ProjectParticipationDto createProjectParticipation(ProjectParticipationDto dto) {
         validateProjectParticipationDto(dto);
 
-        Project project = projectRepository.findById(dto.getProjectId());
-        if (project == null) {
-            throw new IllegalArgumentException("Project with ID " + dto.getProjectId() + " not found.");
-        }
+        Project project = projectRepository.findById(dto.getProjectId()).orElseThrow();
 
-        Employee employee = employeeRepository.findById(dto.getEmployeeId());
-        if (employee == null) {
-            throw new IllegalArgumentException("Employee with ID " + dto.getEmployeeId() + " not found.");
-        }
+        Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow();
 
         ProjectParticipation projectParticipation = new ProjectParticipation();
         projectParticipation.setRole(dto.getRole());
@@ -81,36 +75,24 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
 
     @Override
     public Optional<ProjectParticipationDto> getProjectParticipationById(int id) {
-        ProjectParticipation pp = projectParticipationRepository.findById(id);
-        if (pp != null) {
-            return Optional.of(new ProjectParticipationDto(
-                    pp.getEmployee().getId(),
-                    pp.getProject().getId(),
-                    pp.getRole(),
-                    pp.getStartDate(),
-                    pp.getEndDate()
-            ));
-        }
-        return Optional.empty();
+        ProjectParticipation pp = projectParticipationRepository.findById(id).orElseThrow();
+        return Optional.of(new ProjectParticipationDto(
+                pp.getEmployee().getId(),
+                pp.getProject().getId(),
+                pp.getRole(),
+                pp.getStartDate(),
+                pp.getEndDate()
+        ));
     }
 
     @Transactional
     @Override
     public boolean updateProjectParticipation(ProjectParticipationDto dto) {
-        ProjectParticipation pp = projectParticipationRepository.findById(dto.getEmployeeId());
-        if (pp == null) {
-            return false;
-        }
+        ProjectParticipation pp = projectParticipationRepository.findById(dto.getEmployeeId()).orElseThrow();
 
-        Project project = projectRepository.findById(dto.getProjectId());
-        if (project == null) {
-            throw new IllegalArgumentException("Project with ID " + dto.getProjectId() + " not found.");
-        }
+        Project project = projectRepository.findById(dto.getProjectId()).orElseThrow();
 
-        Employee employee = employeeRepository.findById(dto.getEmployeeId());
-        if (employee == null) {
-            throw new IllegalArgumentException("Employee with ID " + dto.getEmployeeId() + " not found.");
-        }
+        Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow();
 
         pp.setRole(dto.getRole());
         pp.setProject(project);
@@ -118,7 +100,7 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
         pp.setStartDate(dto.getStartDate());
         pp.setEndDate(dto.getEndDate());
 
-        projectParticipationRepository.update(pp);
+        projectParticipationRepository.update(Optional.of(pp));
 
         return true;
     }
@@ -126,12 +108,9 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
     @Transactional
     @Override
     public boolean deleteProjectParticipation(int id) {
-        ProjectParticipation pp = projectParticipationRepository.findById(id);
-        if (pp != null) {
-            projectParticipationRepository.delete(pp);
-            return true;
-        }
-        return false;
+        ProjectParticipation pp = projectParticipationRepository.findById(id).orElseThrow();
+        projectParticipationRepository.delete(pp);
+        return true;
     }
 
     private void validateProjectParticipationDto(ProjectParticipationDto dto) {

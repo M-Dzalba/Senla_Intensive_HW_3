@@ -23,6 +23,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
         this.departmentRepository = Objects.requireNonNull(departmentRepository, "DepartmentRepository must not be null");
     }
+
     @Override
     public DepartmentDto createDepartment(DepartmentDto departmentDTO) {
         if (departmentDTO == null) {
@@ -36,6 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentRepository.save(department);
         return departmentDTO;
     }
+
     @Override
     public List<DepartmentDto> getAllDepartments() {
         List<Department> departments = departmentRepository.findAll();
@@ -47,13 +49,15 @@ public class DepartmentServiceImpl implements DepartmentService {
                         department.getLocation(), department.getParentLocationId()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public Optional<DepartmentDto> getDepartmentById(int id) {
         validateId(id);
         return Optional.ofNullable(departmentRepository.findById(id))
-                .map(department -> new DepartmentDto(department.getId(), department.getName(),
-                        department.getLocation(), department.getParentLocationId()));
+                .map(department -> new DepartmentDto(department.get().getId(), department.get().getName(),
+                        department.get().getLocation(), department.get().getParentLocationId()));
     }
+
     @Override
     public Optional<DepartmentDto> updateDepartment(DepartmentDto departmentDTO) {
         if (departmentDTO == null) {
@@ -61,16 +65,17 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         validateId(departmentDTO.getId());
-        Department department = departmentRepository.findById(departmentDTO.getId());
+        Optional<Department> department = departmentRepository.findById(departmentDTO.getId());
         if (department == null) {
             return Optional.empty();
         }
-        department.setName(departmentDTO.getName());
-        department.setLocation(departmentDTO.getLocation());
-        department.setParentLocationId(departmentDTO.getParentLocationId());
+        department.get().setName(departmentDTO.getName());
+        department.get().setLocation(departmentDTO.getLocation());
+        department.get().setParentLocationId(departmentDTO.getParentLocationId());
         departmentRepository.update(department);
         return Optional.of(departmentDTO);
     }
+
     @Override
     public Optional<DepartmentDto> getDepartmentByName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -86,12 +91,13 @@ public class DepartmentServiceImpl implements DepartmentService {
             return Optional.empty();
         }
     }
+
     @Override
     public boolean deleteDepartment(int id) {
         validateId(id);
-        Department department = departmentRepository.findById(id);
-        if (department != null) {
-            departmentRepository.delete(department);
+        Optional<Department> department = departmentRepository.findById(id);
+        if (department.isPresent()) {
+            departmentRepository.delete(department.get());
             return true;
         }
         return false;

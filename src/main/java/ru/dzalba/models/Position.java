@@ -1,7 +1,6 @@
 package ru.dzalba.models;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "position")
@@ -17,8 +16,8 @@ public class Position implements Identifiable {
     @Column(name = "salary")
     private Double salary;
 
-    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY)
-    private Set<Employee> employees;
+    @OneToOne(mappedBy = "position", fetch = FetchType.LAZY)
+    private Employee employee;
 
     public Position() {
     }
@@ -50,5 +49,13 @@ public class Position implements Identifiable {
 
     public void setSalary(double salary) {
         this.salary = salary;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
