@@ -1,5 +1,0 @@
-CREATE TABLE Positions (
-    ID SERIAL PRIMARY KEY,
-    Title VARCHAR(100) NOT NULL,
-    Salary NUMERIC(10, 2) NOT NULL
-);
