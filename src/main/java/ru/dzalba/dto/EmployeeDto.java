@@ -37,6 +37,8 @@ public class EmployeeDto {
         this.departmentId = departmentId;
     }
 
+    public EmployeeDto() {}
+
     public int getId() {
         return id;
     }

@@ -1,8 +1,11 @@
 package ru.dzalba.config;
 
-import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -12,15 +15,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.Properties;
 
 @Configuration
+@ComponentScan(basePackages = "ru.dzalba")
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
-@ComponentScan(basePackages = "ru.dzalba.repository")
-public class PersistenceConfig {
-
+public class AppConfig {
     @Autowired
     private Environment env;
 
@@ -40,11 +41,7 @@ public class PersistenceConfig {
         emf.setDataSource(dataSource());
         emf.setPackagesToScan("ru.dzalba.models");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        emf.setJpaProperties(new Properties() {{
-            setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-            setProperty("hibernate.hbm2ddl.auto", "create-drop");
-            setProperty("hibernate.show_sql", "true");
-        }});
+        emf.setJpaProperties(hibernateProperties());
         return emf;
     }
 
@@ -59,7 +56,7 @@ public class PersistenceConfig {
         Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", env.getProperty("spring.jpa.database-platform"));
         properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
-        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.show_sql", env.getProperty("spring.jpa.show-sql"));
         return properties;
     }
 }

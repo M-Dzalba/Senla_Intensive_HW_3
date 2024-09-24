@@ -1,12 +1,11 @@
 package ru.dzalba.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dzalba.dto.ProjectDto;
-import ru.dzalba.service.seviceImpl.ProjectServiceImpl;
+import ru.dzalba.service.ProjectService;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,77 +14,51 @@ import java.util.Optional;
 @RequestMapping("/projects")
 public class ProjectController {
 
-    private final ProjectServiceImpl projectServiceImpl;
-    private final ObjectMapper objectMapper;
+    private final ProjectService projectService;
 
-    public ProjectController(ProjectServiceImpl projectServiceImpl, ObjectMapper objectMapper) {
-        this.projectServiceImpl = projectServiceImpl;
-        this.objectMapper = objectMapper;
+    @Autowired
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @PostMapping
-    public ResponseEntity<String> createProject(@RequestBody ProjectDto projectDTO) {
-        ProjectDto createdProject = projectServiceImpl.createProject(projectDTO);
-        try {
-            String json = objectMapper.writeValueAsString(createdProject);
-            return new ResponseEntity<>(json, HttpStatus.CREATED);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDTO) {
+        ProjectDto createdProject = projectService.createProject(projectDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
     @GetMapping
-    public ResponseEntity<String> getAllProjects() {
-        List<ProjectDto> projects = projectServiceImpl.getAllProjects();
-        try {
-            String json = objectMapper.writeValueAsString(projects);
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<ProjectDto>> getAllProjects() {
+        List<ProjectDto> projects = projectService.getAllProjects();
+        return ResponseEntity.ok(projects);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getProjectById(@PathVariable int id) {
-        Optional<ProjectDto> project = projectServiceImpl.getProjectById(id);
-        if (project.isPresent()) {
-            try {
-                String json = objectMapper.writeValueAsString(project.get());
-                return new ResponseEntity<>(json, HttpStatus.OK);
-            } catch (JsonProcessingException e) {
-                return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable int id) {
+        Optional<ProjectDto> project = projectService.getProjectById(id);
+        return project.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProject(@PathVariable int id, @RequestBody ProjectDto projectDTO) {
-        if (projectServiceImpl.getProjectById(id).isPresent()) {
+    public ResponseEntity<ProjectDto> updateProject(@PathVariable int id, @RequestBody ProjectDto projectDTO) {
+        if (projectService.getProjectById(id).isPresent()) {
             projectDTO.setId(id);
-            Optional<ProjectDto> updatedProject = projectServiceImpl.updateProject(projectDTO);
-            if (updatedProject.isPresent()) {
-                try {
-                    String json = objectMapper.writeValueAsString(updatedProject.get());
-                    return new ResponseEntity<>(json, HttpStatus.OK);
-                } catch (JsonProcessingException e) {
-                    return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            ProjectDto updatedProject = projectService.updateProject(projectDTO).orElse(null);
+            return updatedProject != null
+                    ? ResponseEntity.ok(updatedProject)
+                    : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable int id) {
-        if (projectServiceImpl.deleteProject(id)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (projectService.deleteProject(id)) {
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

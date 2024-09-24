@@ -11,6 +11,7 @@ import ru.dzalba.repository.EmployeeRepository;
 import ru.dzalba.repository.PositionRepository;
 import ru.dzalba.service.EmployeeService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,15 +39,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void createEmployee(EmployeeDto employeeDTO) {
-        Employee employee = convertToEntity(employeeDTO);
+    public void createEmployee(EmployeeDto employeeDto) {
+        Employee employee = convertToEntity(employeeDto);
         employeeRepository.save(employee);
     }
 
     @Override
-    public void updateEmployee(EmployeeDto employeeDTO) {
-        Optional<Employee> employee = Optional.of(convertToEntity(employeeDTO));
-        employeeRepository.update(employee);
+    public Employee updateEmployee(EmployeeDto updatedEmployeeDto) {
+        Employee existingEmployee = employeeRepository.findById(updatedEmployeeDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        existingEmployee.setFullName(updatedEmployeeDto.getFullName());
+        existingEmployee.setBirthDate(updatedEmployeeDto.getBirthDate());
+        existingEmployee.setPosition(positionRepository.findById(updatedEmployeeDto.getPositionId())
+                .orElseThrow(() -> new IllegalArgumentException("Position not found")));
+        existingEmployee.setDepartment(departmentRepository.findById(updatedEmployeeDto.getDepartmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Department not found")));
+
+        return employeeRepository.save(existingEmployee);
     }
 
     @Override
@@ -69,6 +79,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employees.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<EmployeeDto> findById(int id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        return employee.map(this::convertToDto);
     }
 
     private EmployeeDto convertToDto(Employee employee) {

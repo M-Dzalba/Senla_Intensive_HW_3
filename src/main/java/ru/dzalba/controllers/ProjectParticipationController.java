@@ -1,12 +1,11 @@
 package ru.dzalba.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dzalba.dto.ProjectParticipationDto;
-import ru.dzalba.service.seviceImpl.ProjectParticipationServiceImpl;
+import ru.dzalba.service.ProjectParticipationService;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,75 +14,51 @@ import java.util.Optional;
 @RequestMapping("/participations")
 public class ProjectParticipationController {
 
-    private final ProjectParticipationServiceImpl projectParticipationServiceImpl;
-    private final ObjectMapper objectMapper;
+    private final ProjectParticipationService projectParticipationService;
 
-    public ProjectParticipationController(ProjectParticipationServiceImpl projectParticipationServiceImpl, ObjectMapper objectMapper) {
-        this.projectParticipationServiceImpl = projectParticipationServiceImpl;
-        this.objectMapper = objectMapper;
+    @Autowired
+    public ProjectParticipationController(ProjectParticipationService projectParticipationService) {
+        this.projectParticipationService = projectParticipationService;
     }
 
     @PostMapping
-    public ResponseEntity<String> createProjectParticipation(@RequestBody ProjectParticipationDto participationDto) {
+    public ResponseEntity<?> createProjectParticipation(@RequestBody ProjectParticipationDto participationDto) {
         try {
-            ProjectParticipationDto createdParticipation = projectParticipationServiceImpl.createProjectParticipation(participationDto);
-            String json = objectMapper.writeValueAsString(createdParticipation);
-            return new ResponseEntity<>(json, HttpStatus.CREATED);
+            ProjectParticipationDto createdParticipation = projectParticipationService.createProjectParticipation(participationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdParticipation);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping
-    public ResponseEntity<String> getAllProjectParticipations() {
-        List<ProjectParticipationDto> participations = projectParticipationServiceImpl.getAllProjectParticipations();
-        try {
-            String json = objectMapper.writeValueAsString(participations);
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<ProjectParticipationDto>> getAllProjectParticipations() {
+        List<ProjectParticipationDto> participations = projectParticipationService.getAllProjectParticipations();
+        return ResponseEntity.ok(participations);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getProjectParticipationById(@PathVariable int id) {
-        Optional<ProjectParticipationDto> participation = projectParticipationServiceImpl.getProjectParticipationById(id);
-        if (participation.isPresent()) {
-            try {
-                String json = objectMapper.writeValueAsString(participation.get());
-                return new ResponseEntity<>(json, HttpStatus.OK);
-            } catch (JsonProcessingException e) {
-                return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ProjectParticipationDto> getProjectParticipationById(@PathVariable int id) {
+        Optional<ProjectParticipationDto> participation = projectParticipationService.getProjectParticipationById(id);
+        return participation.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProjectParticipation(@PathVariable int id, @RequestBody ProjectParticipationDto participationDto) {
+    public ResponseEntity<ProjectParticipationDto> updateProjectParticipation(@PathVariable int id, @RequestBody ProjectParticipationDto participationDto) {
         participationDto.setEmployeeId(id);
-        boolean isUpdated = projectParticipationServiceImpl.updateProjectParticipation(participationDto);
-        if (isUpdated) {
-            try {
-                String json = objectMapper.writeValueAsString(participationDto);
-                return new ResponseEntity<>(json, HttpStatus.OK);
-            } catch (JsonProcessingException e) {
-                return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        boolean isUpdated = projectParticipationService.updateProjectParticipation(participationDto);
+        return isUpdated
+                ? ResponseEntity.ok(participationDto)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjectParticipation(@PathVariable int id) {
-        if (projectParticipationServiceImpl.deleteProjectParticipation(id)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (projectParticipationService.deleteProjectParticipation(id)) {
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

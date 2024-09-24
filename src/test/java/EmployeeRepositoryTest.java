@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.web.WebAppConfiguration;
 import ru.dzalba.models.Department;
 import ru.dzalba.models.Employee;
 import ru.dzalba.models.Position;
@@ -16,6 +18,9 @@ import java.util.NoSuchElementException;
 import static org.junit.Assert.*;
 
 @SpringJUnitConfig(TestConfig.class)
+@Transactional
+@WebAppConfiguration
+@ActiveProfiles("test")
 public class EmployeeRepositoryTest {
 
     @Autowired
@@ -27,7 +32,6 @@ public class EmployeeRepositoryTest {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    @Transactional
     @Test
     public void testSaveEmployee() {
         Position position = new Position("Developer", 50000);
@@ -51,7 +55,6 @@ public class EmployeeRepositoryTest {
         assertEquals("John Doe", foundEmployee.getFullName());
     }
 
-    @Transactional
     @Test
     public void testFindAllEmployees() {
         Position position1 = new Position("Developer", 50000);
@@ -88,7 +91,6 @@ public class EmployeeRepositoryTest {
         assertEquals(2, allEmployees.size());
     }
 
-    @Transactional
     @Test
     public void testUpdateEmployee() {
         Position position = new Position("Developer", 50000);
@@ -118,7 +120,6 @@ public class EmployeeRepositoryTest {
         assertEquals("1111111111", updatedEmployee.getPhoneNumber());
     }
 
-    @Transactional
     @Test
     public void testDeleteEmployee() {
         Position position = new Position("Developer", 50000);

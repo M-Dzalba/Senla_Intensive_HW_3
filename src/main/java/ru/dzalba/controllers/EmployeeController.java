@@ -5,54 +5,59 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dzalba.dto.EmployeeDto;
-import ru.dzalba.service.seviceImpl.EmployeeServiceImpl;
+import ru.dzalba.service.EmployeeService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    private final EmployeeServiceImpl employeeServiceImpl;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-        this.employeeServiceImpl = employeeServiceImpl;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        List<EmployeeDto> employees = employeeServiceImpl.getAllEmployees();
+    @GetMapping
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees(@RequestParam(required = false) String name) {
+        List<EmployeeDto> employees = (name != null) ? employeeService.findEmployeesByName(name) : employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<String> addEmployee(@RequestBody EmployeeDto employeeDTO) {
         validateEmployeeDto(employeeDTO);
-
-        employeeServiceImpl.createEmployee(employeeDTO);
+        employeeService.createEmployee(employeeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Employee added");
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody EmployeeDto employeeDTO) {
         validateEmployeeDto(employeeDTO);
-
         employeeDTO.setId(id);
-        employeeServiceImpl.updateEmployee(employeeDTO);
+        employeeService.updateEmployee(employeeDTO);
         return ResponseEntity.ok("Employee updated");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
-        employeeServiceImpl.deleteEmployee(id);
+        employeeService.deleteEmployee(id);
         return ResponseEntity.ok("Employee deleted");
     }
 
-    @GetMapping("/search/name")
-    public ResponseEntity<List<EmployeeDto>> findEmployeesByName(@RequestParam String name) {
-        List<EmployeeDto> employees = employeeServiceImpl.findEmployeesByName(name);
+    @GetMapping("/search-by-name")    public ResponseEntity<List<EmployeeDto>> findEmployeesByName(@RequestParam(required = false) String name) {
+        List<EmployeeDto> employees = (name != null) ? employeeService.findEmployeesByName(name) : employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> findById(@PathVariable int id) {
+        Optional<EmployeeDto> employeeDto = employeeService.findById(id);
+        return employeeDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     private void validateEmployeeDto(EmployeeDto employeeDTO) {

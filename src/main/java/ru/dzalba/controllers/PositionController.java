@@ -1,12 +1,11 @@
 package ru.dzalba.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dzalba.dto.PositionDto;
-import ru.dzalba.service.seviceImpl.PositionServiceImpl;
+import ru.dzalba.service.PositionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,77 +14,51 @@ import java.util.Optional;
 @RequestMapping("/positions")
 public class PositionController {
 
-    private final PositionServiceImpl positionServiceImpl;
-    private final ObjectMapper objectMapper;
+    private final PositionService positionService;
 
-    public PositionController(PositionServiceImpl positionServiceImpl, ObjectMapper objectMapper) {
-        this.positionServiceImpl = positionServiceImpl;
-        this.objectMapper = objectMapper;
+    @Autowired
+    public PositionController(PositionService positionService) {
+        this.positionService = positionService;
     }
 
     @PostMapping
-    public ResponseEntity<String> createPosition(@RequestBody PositionDto positionDTO) {
-        PositionDto createdPosition = positionServiceImpl.createPosition(positionDTO);
-        try {
-            String json = objectMapper.writeValueAsString(createdPosition);
-            return new ResponseEntity<>(json, HttpStatus.CREATED);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<PositionDto> createPosition(@RequestBody PositionDto positionDTO) {
+        PositionDto createdPosition = positionService.createPosition(positionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPosition);
     }
 
     @GetMapping
-    public ResponseEntity<String> getAllPositions() {
-        List<PositionDto> positions = positionServiceImpl.getAllPositions();
-        try {
-            String json = objectMapper.writeValueAsString(positions);
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<PositionDto>> getAllPositions() {
+        List<PositionDto> positions = positionService.getAllPositions();
+        return ResponseEntity.ok(positions);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getPositionById(@PathVariable int id) {
-        Optional<PositionDto> position = positionServiceImpl.getPositionById(id);
-        if (position.isPresent()) {
-            try {
-                String json = objectMapper.writeValueAsString(position.get());
-                return new ResponseEntity<>(json, HttpStatus.OK);
-            } catch (JsonProcessingException e) {
-                return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<PositionDto> getPositionById(@PathVariable int id) {
+        Optional<PositionDto> position = positionService.getPositionById(id);
+        return position.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updatePosition(@PathVariable int id, @RequestBody PositionDto positionDTO) {
-        if (positionServiceImpl.getPositionById(id).isPresent()) {
+    public ResponseEntity<PositionDto> updatePosition(@PathVariable int id, @RequestBody PositionDto positionDTO) {
+        if (positionService.getPositionById(id).isPresent()) {
             positionDTO.setId(id);
-            Optional<PositionDto> updatedPosition = positionServiceImpl.updatePosition(positionDTO);
-            if (updatedPosition.isPresent()) {
-                try {
-                    String json = objectMapper.writeValueAsString(updatedPosition.get());
-                    return new ResponseEntity<>(json, HttpStatus.OK);
-                } catch (JsonProcessingException e) {
-                    return new ResponseEntity<>("Error serializing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            PositionDto updatedPosition = positionService.updatePosition(positionDTO).orElse(null);
+            return updatedPosition != null
+                    ? ResponseEntity.ok(updatedPosition)
+                    : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePosition(@PathVariable int id) {
-        if (positionServiceImpl.deletePosition(id)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (positionService.deletePosition(id)) {
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }
