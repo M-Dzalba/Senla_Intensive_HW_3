@@ -35,14 +35,20 @@ public class DepartmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepartmentDto> getDepartmentById(@PathVariable int id) {
+    public ResponseEntity<DepartmentDto> getDepartmentById(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Optional<DepartmentDto> department = departmentService.getDepartmentById(id);
         return department.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable int id, @RequestBody DepartmentDto departmentDTO) {
+    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable Integer id, @RequestBody DepartmentDto departmentDTO) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (departmentService.getDepartmentById(id).isPresent()) {
             departmentDTO.setId(id);
             DepartmentDto updatedDepartment = departmentService.updateDepartment(departmentDTO)
@@ -56,7 +62,10 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable int id) {
+    public ResponseEntity<Void> deleteDepartment(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (departmentService.deleteDepartment(id)) {
             return ResponseEntity.noContent().build();
         } else {

@@ -40,22 +40,23 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentDto> getAllDepartments() {
-        List<Department> departments = departmentRepository.findAll();
-        if (departments == null) {
-            return Collections.emptyList();
-        }
-        return departments.stream()
-                .map(department -> new DepartmentDto(department.getId(), department.getName(),
-                        department.getLocation(), department.getParentLocationId()))
+        return Optional.ofNullable(departmentRepository.findAll()).orElse(Collections.emptyList())
+                .stream()
+                .filter(Objects::nonNull)
+                .map(this::createNewDepartmentDto)
                 .collect(Collectors.toList());
+    }
+
+    private DepartmentDto createNewDepartmentDto(Department department) {
+        return new DepartmentDto(department.getId(), department.getName(),
+                department.getLocation(), department.getParentLocationId());
     }
 
     @Override
     public Optional<DepartmentDto> getDepartmentById(int id) {
         validateId(id);
-        return Optional.ofNullable(departmentRepository.findById(id))
-                .map(department -> new DepartmentDto(department.get().getId(), department.get().getName(),
-                        department.get().getLocation(), department.get().getParentLocationId()));
+        return departmentRepository.findById(id)
+                .map(this::createNewDepartmentDto);
     }
 
     @Override
@@ -81,13 +82,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Department name must not be null or empty");
         }
-
         try {
             Department department = departmentRepository.findByName(name);
-            return Optional.of(new DepartmentDto(department.getId(), department.getName(),
-                    department.getLocation(), department.getParentLocationId()));
+            return Optional.ofNullable(department)
+                    .map(this::createNewDepartmentDto);
         } catch (NoResultException e) {
-
             return Optional.empty();
         }
     }

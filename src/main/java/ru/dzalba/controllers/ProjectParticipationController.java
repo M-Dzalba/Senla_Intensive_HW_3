@@ -38,14 +38,20 @@ public class ProjectParticipationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectParticipationDto> getProjectParticipationById(@PathVariable int id) {
+    public ResponseEntity<ProjectParticipationDto> getProjectParticipationById(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Optional<ProjectParticipationDto> participation = projectParticipationService.getProjectParticipationById(id);
         return participation.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectParticipationDto> updateProjectParticipation(@PathVariable int id, @RequestBody ProjectParticipationDto participationDto) {
+    public ResponseEntity<ProjectParticipationDto> updateProjectParticipation(@PathVariable Integer id, @RequestBody ProjectParticipationDto participationDto) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         participationDto.setEmployeeId(id);
         boolean isUpdated = projectParticipationService.updateProjectParticipation(participationDto);
         return isUpdated
@@ -54,7 +60,10 @@ public class ProjectParticipationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProjectParticipation(@PathVariable int id) {
+    public ResponseEntity<Void> deleteProjectParticipation(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (projectParticipationService.deleteProjectParticipation(id)) {
             return ResponseEntity.noContent().build();
         } else {

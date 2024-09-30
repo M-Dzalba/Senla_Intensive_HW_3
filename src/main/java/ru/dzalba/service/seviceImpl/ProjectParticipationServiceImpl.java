@@ -12,6 +12,7 @@ import ru.dzalba.service.ProjectParticipationService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,6 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
         validateProjectParticipationDto(dto);
 
         Project project = projectRepository.findById(dto.getProjectId()).orElseThrow();
-
         Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow();
 
         ProjectParticipation projectParticipation = new ProjectParticipation();
@@ -51,6 +51,24 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
 
         projectParticipationRepository.save(projectParticipation);
 
+        return createNewProjectParticipationDto(projectParticipation);
+    }
+
+    @Override
+    public List<ProjectParticipationDto> getAllProjectParticipations() {
+        return projectParticipationRepository.findAll().stream()
+                .filter(Objects::nonNull)
+                .map(this::createNewProjectParticipationDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ProjectParticipationDto> getProjectParticipationById(int id) {
+        ProjectParticipation pp = projectParticipationRepository.findById(id).orElseThrow();
+        return Optional.of(createNewProjectParticipationDto(pp));
+    }
+
+    private ProjectParticipationDto createNewProjectParticipationDto(ProjectParticipation projectParticipation) {
         return new ProjectParticipationDto(
                 projectParticipation.getEmployee().getId(),
                 projectParticipation.getProject().getId(),
@@ -58,31 +76,6 @@ public class ProjectParticipationServiceImpl implements ProjectParticipationServ
                 projectParticipation.getStartDate(),
                 projectParticipation.getEndDate()
         );
-    }
-
-    @Override
-    public List<ProjectParticipationDto> getAllProjectParticipations() {
-        return projectParticipationRepository.findAll().stream()
-                .map(pp -> new ProjectParticipationDto(
-                        pp.getEmployee().getId(),
-                        pp.getProject().getId(),
-                        pp.getRole(),
-                        pp.getStartDate(),
-                        pp.getEndDate()
-                ))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<ProjectParticipationDto> getProjectParticipationById(int id) {
-        ProjectParticipation pp = projectParticipationRepository.findById(id).orElseThrow();
-        return Optional.of(new ProjectParticipationDto(
-                pp.getEmployee().getId(),
-                pp.getProject().getId(),
-                pp.getRole(),
-                pp.getStartDate(),
-                pp.getEndDate()
-        ));
     }
 
     @Transactional

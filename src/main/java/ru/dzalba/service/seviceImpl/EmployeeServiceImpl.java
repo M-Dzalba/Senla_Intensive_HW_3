@@ -13,6 +13,7 @@ import ru.dzalba.service.EmployeeService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
         return employees.stream()
+                .filter(Objects::nonNull)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

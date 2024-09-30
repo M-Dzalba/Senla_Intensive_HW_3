@@ -34,14 +34,20 @@ public class PositionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PositionDto> getPositionById(@PathVariable int id) {
+    public ResponseEntity<PositionDto> getPositionById(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Optional<PositionDto> position = positionService.getPositionById(id);
         return position.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PositionDto> updatePosition(@PathVariable int id, @RequestBody PositionDto positionDTO) {
+    public ResponseEntity<PositionDto> updatePosition(@PathVariable Integer id, @RequestBody PositionDto positionDTO) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (positionService.getPositionById(id).isPresent()) {
             positionDTO.setId(id);
             PositionDto updatedPosition = positionService.updatePosition(positionDTO).orElse(null);
@@ -54,7 +60,10 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePosition(@PathVariable int id) {
+    public ResponseEntity<Void> deletePosition(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (positionService.deletePosition(id)) {
             return ResponseEntity.noContent().build();
         } else {

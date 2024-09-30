@@ -47,6 +47,64 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectRepository.save(project);
 
+        return createNewProjectDto(project);
+    }
+
+    @Override
+    public List<ProjectDto> getAllProjects() {
+        return projectRepository.findAll().stream()
+                .map(this::createNewProjectDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ProjectDto> getProjectById(int id) {
+        return projectRepository.findById(id)
+                .map(this::createNewProjectDto);
+    }
+
+    @Override
+    public Optional<ProjectDto> updateProject(ProjectDto projectDTO) {
+        Optional<Project> existingProject = projectRepository.findById(projectDTO.getId());
+
+        if (existingProject.isPresent()) {
+            Project project = existingProject.get();
+            project.setName(projectDTO.getName());
+            project.setDescription(projectDTO.getDescription());
+            project.setStartDate(projectDTO.getStartDate());
+            project.setEndDate(projectDTO.getEndDate());
+
+            Set<ProjectParticipation> participations = projectDTO.getProjectParticipations().stream()
+                    .map(participationDto -> new ProjectParticipation(
+                            new Employee(participationDto.getEmployeeId()),
+                            project,
+                            participationDto.getRole(),
+                            participationDto.getStartDate(),
+                            participationDto.getEndDate()
+                    ))
+                    .collect(Collectors.toSet());
+            project.setProjectParticipations(participations);
+
+            projectRepository.save(project);
+
+            return Optional.of(createNewProjectDto(project));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<ProjectDto> findProjectsByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name must not be null or empty");
+        }
+
+        return projectRepository.findByName(name).stream()
+                .map(this::createNewProjectDto)
+                .collect(Collectors.toList());
+    }
+
+    private ProjectDto createNewProjectDto(Project project) {
         return new ProjectDto(
                 project.getId(),
                 project.getName(),
@@ -63,121 +121,6 @@ public class ProjectServiceImpl implements ProjectService {
                         ))
                         .collect(Collectors.toSet())
         );
-    }
-
-    @Override
-    public List<ProjectDto> getAllProjects() {
-        return projectRepository.findAll().stream()
-                .map(p -> new ProjectDto(
-                        p.getId(),
-                        p.getName(),
-                        p.getDescription(),
-                        p.getStartDate(),
-                        p.getEndDate(),
-                        p.getProjectParticipations().stream()
-                                .map(participation -> new ProjectParticipationDto(
-                                        participation.getEmployee().getId(),
-                                        participation.getProject().getId(),
-                                        participation.getRole(),
-                                        participation.getStartDate(),
-                                        participation.getEndDate()
-                                ))
-                                .collect(Collectors.toSet())
-                ))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<ProjectDto> getProjectById(int id) {
-        Project project = projectRepository.findById(id).orElseThrow();
-        return Optional.of(new ProjectDto(
-                project.getId(),
-                project.getName(),
-                project.getDescription(),
-                project.getStartDate(),
-                project.getEndDate(),
-                project.getProjectParticipations().stream()
-                        .map(participation -> new ProjectParticipationDto(
-                                participation.getEmployee().getId(),
-                                participation.getProject().getId(),
-                                participation.getRole(),
-                                participation.getStartDate(),
-                                participation.getEndDate()
-                        ))
-                        .collect(Collectors.toSet())
-        ));
-    }
-
-    @Override
-    public Optional<ProjectDto> updateProject(ProjectDto projectDTO) {
-        Optional<Project> existingProject = projectRepository.findById(projectDTO.getId());
-
-        if (existingProject.isPresent()) {
-            Project project = existingProject.get();
-            project.setName(projectDTO.getName());
-            project.setDescription(projectDTO.getDescription());
-            project.setStartDate(projectDTO.getStartDate());
-            project.setEndDate(projectDTO.getEndDate());
-
-
-            Set<ProjectParticipation> participations = projectDTO.getProjectParticipations().stream()
-                    .map(participationDto -> new ProjectParticipation(
-                            new Employee(participationDto.getEmployeeId()),
-                            project,
-                            participationDto.getRole(),
-                            participationDto.getStartDate(),
-                            participationDto.getEndDate()
-                    ))
-                    .collect(Collectors.toSet());
-            project.setProjectParticipations(participations);
-
-            projectRepository.save(project);
-
-            return Optional.of(new ProjectDto(
-                    project.getId(),
-                    project.getName(),
-                    project.getDescription(),
-                    project.getStartDate(),
-                    project.getEndDate(),
-                    project.getProjectParticipations().stream()
-                            .map(participation -> new ProjectParticipationDto(
-                                    participation.getEmployee().getId(),
-                                    participation.getProject().getId(),
-                                    participation.getRole(),
-                                    participation.getStartDate(),
-                                    participation.getEndDate()
-                            ))
-                            .collect(Collectors.toSet())
-            ));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public List<ProjectDto> findProjectsByName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name must not be null or empty");
-        }
-
-        return projectRepository.findByName(name).stream()
-                .map(p -> new ProjectDto(
-                        p.getId(),
-                        p.getName(),
-                        p.getDescription(),
-                        p.getStartDate(),
-                        p.getEndDate(),
-                        p.getProjectParticipations().stream()
-                                .map(participation -> new ProjectParticipationDto(
-                                        participation.getEmployee().getId(),
-                                        participation.getProject().getId(),
-                                        participation.getRole(),
-                                        participation.getStartDate(),
-                                        participation.getEndDate()
-                                ))
-                                .collect(Collectors.toSet())
-                ))
-                .collect(Collectors.toList());
     }
 
     @Override

@@ -35,7 +35,10 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody EmployeeDto employeeDTO) {
+    public ResponseEntity<String> updateEmployee(@PathVariable Integer id, @RequestBody EmployeeDto employeeDTO) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body("Invalid employee ID");
+        }
         validateEmployeeDto(employeeDTO);
         employeeDTO.setId(id);
         employeeService.updateEmployee(employeeDTO);
@@ -43,18 +46,25 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
+    public ResponseEntity<String> deleteEmployee(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body("Invalid employee ID");
+        }
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok("Employee deleted");
     }
 
-    @GetMapping("/search-by-name")    public ResponseEntity<List<EmployeeDto>> findEmployeesByName(@RequestParam(required = false) String name) {
+    @GetMapping("/search-by-name")
+    public ResponseEntity<List<EmployeeDto>> findEmployeesByName(@RequestParam(required = false) String name) {
         List<EmployeeDto> employees = (name != null) ? employeeService.findEmployeesByName(name) : employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> findById(@PathVariable int id) {
+    public ResponseEntity<EmployeeDto> findById(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Optional<EmployeeDto> employeeDto = employeeService.findById(id);
         return employeeDto.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());

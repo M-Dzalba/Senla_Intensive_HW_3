@@ -7,6 +7,7 @@ import ru.dzalba.repository.PositionRepository;
 import ru.dzalba.service.PositionService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,15 +34,20 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public List<PositionDto> getAllPositions() {
         return positionRepository.findAll().stream()
-                .map(position -> new PositionDto(position.getId(), position.getTitle(), position.getSalary()))
+                .filter(Objects::nonNull)
+                .map(this::createNewPositionDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<PositionDto> getPositionById(int id) {
         validateId(id);
-        return Optional.ofNullable(positionRepository.findById(id))
-                .map(position -> new PositionDto(position.get().getId(), position.get().getTitle(), position.get().getSalary()));
+        return positionRepository.findById(id)
+                .map(this::createNewPositionDto);
+    }
+
+    private PositionDto createNewPositionDto(Position position) {
+        return new PositionDto(position.getId(), position.getTitle(), position.getSalary());
     }
 
     @Override

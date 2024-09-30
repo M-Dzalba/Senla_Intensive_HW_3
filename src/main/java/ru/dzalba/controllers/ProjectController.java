@@ -34,14 +34,20 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable int id) {
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Optional<ProjectDto> project = projectService.getProjectById(id);
         return project.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectDto> updateProject(@PathVariable int id, @RequestBody ProjectDto projectDTO) {
+    public ResponseEntity<ProjectDto> updateProject(@PathVariable Integer id, @RequestBody ProjectDto projectDTO) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (projectService.getProjectById(id).isPresent()) {
             projectDTO.setId(id);
             ProjectDto updatedProject = projectService.updateProject(projectDTO).orElse(null);
@@ -54,7 +60,10 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable int id) {
+    public ResponseEntity<Void> deleteProject(@PathVariable Integer id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         if (projectService.deleteProject(id)) {
             return ResponseEntity.noContent().build();
         } else {
